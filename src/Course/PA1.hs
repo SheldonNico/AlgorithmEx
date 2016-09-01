@@ -127,7 +127,8 @@ components gr =
               store' = now ++ store
               unprocessed' = filter (`notElem` store') unprocessed
           in if null unprocessed' then n
-                 else check (head unprocessed') store' unprocessed' (n+1) 
+                 else map
+                   check (head unprocessed') store' unprocessed' (n+1)
 
 
   in check a [] 0

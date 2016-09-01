@@ -1,0 +1,10 @@
+*~
+*#*
+*.pdf
+
+# ctags
+TAGS
+
+# Stack
+.stack-work/
+

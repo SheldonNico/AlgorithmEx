@@ -1,0 +1,3 @@
+:set -isrc
+:l src/Course.hs
+:set prompt ">> "

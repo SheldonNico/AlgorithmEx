@@ -61,10 +61,34 @@ checkFile filepath = do
                 else "Wrong for " ++ filepath ++ ":" ++ take 20 cont1
   return out -}
 
+
+
+
+
+
+
+
 -- Graphs PA1
+{-
 main :: IO ()
 main = do
   let samples = [(4, [(1,2),(3,2)], 1, 4)]
       check (a, test, u, v) =
         putStrLn (show test ++ "\nAnswers: " ++ show (reachbility (0, a) test (u, v)))
   mapM_ check samples
+-}
+
+
+
+
+
+
+
+
+
+
+
+-- Strings
+-- PA1
+main :: IO ()
+main = putStrLn "Just for test"

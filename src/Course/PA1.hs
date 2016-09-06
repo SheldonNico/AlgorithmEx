@@ -93,6 +93,10 @@ treeHeight tree =
 --   in reverse out
 
 
+
+
+
+
 -- PA Grahs
 -- PA1
 type Vertex = Int
@@ -118,17 +122,25 @@ reachbility bounds0 edges0 (u, v) =
   reach (buildNoDirG bounds0 edges0) u v
 
 -- PA2
-components :: NoDirGraph -> Int
-components gr =
-  let (a, b) = bounds gr
-      check _ _ [] n = n
-      check x store unprocessed n = -- check x if in xs
-          let now = gr ! x
-              store' = now ++ store
-              unprocessed' = filter (`notElem` store') unprocessed
-          in if null unprocessed' then n
-                 else map
-                   check (head unprocessed') store' unprocessed' (n+1)
+-- components :: NoDirGraph -> Int
+-- components gr =
+--   let (a, b) = bounds gr
+--       check _ _ [] n = n
+--       check x store unprocessed n = -- check x if in xs
+--           let now = gr ! x
+--               store' = now ++ store
+--               unprocessed' = filter (`notElem` store') unprocessed
+--           in if null unprocessed' then n
+--                  else map
+--                    check (head unprocessed') store' unprocessed' (n+1)
+--
+--
+--   in check a [] 0
 
 
-  in check a [] 0
+
+
+
+-- Strings
+-- data Pattern a = Leaf | Node a (P)
+-- buildTire :: [String] -> Pattern Char

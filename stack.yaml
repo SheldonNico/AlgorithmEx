@@ -43,6 +43,8 @@ extra-deps:
   - directory-1.2.5.1
   - array-0.5.1.0
   - containers-0.5.8.1
+  - data-memocombinators-0.5.1
+  - pqueue-1.3.1.1
 
 # Override default flag values for local packages and extra-deps
 flags: {}

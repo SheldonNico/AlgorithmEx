@@ -21,6 +21,8 @@ library
                      , directory
                      , array
                      , containers
+                     , data-memocombinators
+                     , pqueue
   default-language:    Haskell2010
 
 executable AlgorithmEx-exe

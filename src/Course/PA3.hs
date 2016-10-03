@@ -1,3 +1,4 @@
+-- | Source files for Algorithm Graphs
 module Course.PA3 where
 
 import qualified Data.Set as S

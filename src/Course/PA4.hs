@@ -1,6 +1,5 @@
+-- | Source files for Algorithm Strings
 module Course.PA4 where
-
---import Data.Array
 
 -- Strings
 -- data Pattern a = Leaf | Node a (P)

@@ -4,7 +4,7 @@ module Course.PA3 where
 import qualified Data.Set as S
 import Data.Array.IArray
 -- Trees
--- sol1 子找父
+-- sol1 child look for parent
 {- treeHeight :: [Int] -> Int
 treeHeight tree =
   let n = (length tree) - 1
@@ -12,7 +12,7 @@ treeHeight tree =
                  | otherwise = 1 + helper (tree !! ind)
   in foldr (max . helper) 0 tree -}
 
--- sol2 父找子
+-- sol2 parent look for child
 treeHeight :: [Int] -> Int
 treeHeight tree =
   let parseTree = zip tree [0..]

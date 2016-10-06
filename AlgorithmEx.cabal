@@ -21,9 +21,8 @@ library
                      , Course.PA3
                      , Course.PA4
   build-depends:       base >= 4.7 && < 5
-                     , directory
-                     , array
                      , containers
+                     , array
                      , data-memocombinators
   default-language:    Haskell2010
 

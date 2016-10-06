@@ -298,7 +298,6 @@ calculator n = ar ! n
         f 1 = (0, [1])
         f m = let (n', li') = minimum . map (ar !) . filter (< m) $ [div2 m, div3 m, minus1 m]
               in (n'+1, m:li')
--- 时间上为什么只是勉强及格?
 
 -- Assignments2
 optimalWeight :: [Int] -> Int -> Int

@@ -1,7 +1,7 @@
 module Course.CS15210 where
 
 import Control.Monad
-import Data.List (permutations, tails, inits, foldl')
+import Data.List (permutations, tails, inits, foldl', scanl', sort)
 import Control.Arrow ((&&&))
 import Data.Function (on)
 import Text.Parsec
@@ -161,9 +161,9 @@ parenDistDivCon parens =
        (_, _, out, _) -> out
 
 
-
 -- Chapter 6 Sequence
 -- Course materials
+--
 -- example 1: primes
 primesBF n = filter isPrimes [2..n]
   where isPrimes m = length [j | i <- [1..floor (sqrt (fromIntegral m))],
@@ -184,3 +184,45 @@ p602 xs = foldl' reduce (Just 0) xs == Just 0
         reduce (Just n) CParen = if n == 0 then Nothing else Just (n-1)
         reduce (Just n) OParen = Just (n+1)
 -- p603 proof reduce is equivalent to iterate
+-- proof is easy
+-- iterate f id a = id `f` a[0] `f` a[1] `f` a[2] ... `f` a[n-1] `f` a[n]
+-- because of associty law
+-- it equals to = (id `f` a[0] `f` a[1] `f` ... `f` a[floor (div n 2) - 1]) `f`
+--                (id `f` a[floor (div n 2)] `f` ... `f` a[n-1] `f` a[n])
+--              = reduce f id a
+-- p604 solve match paren with scanl' instead of foldl'
+p604 :: Parens -> Bool
+p604 xs = all (>=0) out && last out == 0
+ where  out = scanl' reduce 0 xs
+        reduce n CParen = n-1
+        reduce n OParen = n+1
+-- p605 
+-- map f xs = tabulate (\i -> f xs[i]) |xs|
+-- for simplify: suppose f take O(1) work and span
+-- cost in array sequence: Work-O(n) Span-O(1)
+-- cost in tree sequence: Work-O(nlog(n)) Span-O(log(n))
+
+
+
+-- Chapter 7 Algorithm-Design Tech: Contraction
+-- example
+reduce_contract :: (a -> a -> a) -> [a] -> a
+reduce_contract _ [a] = a
+reduce_contract f as  = 
+  -- import: assumption |as| is a power of two.
+  let bs = [f (as !! i) (as !! (i+1)) | i <- [0,2 .. length as-1]] 
+  in reduce_contract f bs
+
+-- p701 find rank r in a list
+p701 xs r = 
+  let n  = length xs
+      r' = r+1
+      contract f (a:aa:as) = f a aa : contract f as -- this is not paralleled, should use reduce or something
+      contract _ [a] = [a]
+      contract _ []  = []
+      (b, bs) = splitAt (rem n r' + 1) xs
+  in if n == r'
+     then minimum xs
+     else if n > r' && n < 2*r'
+          then (sort xs) !! r
+          else p701 (contract min xs) r

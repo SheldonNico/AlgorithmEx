@@ -214,15 +214,90 @@ reduce_contract f as  =
   in reduce_contract f bs
 
 -- p701 find rank r in a list
-p701 xs r = 
-  let n  = length xs
-      r' = r+1
-      contract f (a:aa:as) = f a aa : contract f as -- this is not paralleled, should use reduce or something
-      contract _ [a] = [a]
-      contract _ []  = []
-      (b, bs) = splitAt (rem n r' + 1) xs
-  in if n == r'
-     then minimum xs
-     else if n > r' && n < 2*r'
-          then (sort xs) !! r
-          else p701 (contract min xs) r
+-- just pusedo code
+-- step1: div list into groups, every group have r+1 elements, and sort every group: work-O(n/r) * O(r)
+-- step2: join every nearby two group, get new group of r+1-elements: work-W(n/r) = W(n/r * 1/2) + O(n/r * 1/2) * O(r * const)
+-- step3: at last, only 1 group remains, take the last member: Const
+-- suppose sort every r+1 elements have const time, then work-O(n/r) * O(r)
+p701 :: Ord a => Int -> [a] -> a
+p701 r xs = last . foldr1 (\x acc -> take r (join2 x acc)) . map sortr . group r $ xs
+  where
+    sortr :: Ord a => [a] -> [a]
+    sortr = sort
+    join2 :: Ord a => [a] -> [a] -> [a]
+    join2 [] ys = ys
+    join2 (x:xs) ys =
+      let (as, bs) = span (<= x) ys
+      in as ++ [x] ++ join2 xs bs
+    group :: Int -> [a] -> [[a]]
+    group _ [] = []
+    group r xs = take r xs : group r (drop r xs)
+
+-- Chapter 9 Maximum continuous sum
+mcsBF :: (Num a, Ord a) => [a] -> (a, [a])
+mcsBF xs =
+  let n = length xs
+  in maximum [ (sum out, out) | i <- [0..n-1], j <- [i..n-1], let out = slice i j xs ]
+
+mcsBF2 :: (Num a, Ord a) => [a] -> a
+mcsBF2 xs =
+  let n = length xs
+      sublist = take n $ iterate (drop 1) xs
+  in maximum . map (maximum . scanl (+) 0) $ sublist
+
+mcsScan :: [Int] -> Int
+mcsScan xs = 
+  let c = scanl (+) 0 xs
+      d = scanl min maxBound c
+      e = zipWith (-) c d
+   in foldl max minBound (tail e)
+
+mcsDivAndCon' :: [Int] -> (Int, Int, Int, Int)
+mcsDivAndCon' [] = (minBound, minBound, minBound, 0)
+mcsDivAndCon' [a] = (a, a, a, a)
+mcsDivAndCon' xs =
+  let (right, left) = splitAt (div (length xs) 2) xs
+      (p1, m1, s1, t1) = mcsDivAndCon' right
+      (p2, m2, s2, t2) = mcsDivAndCon' left
+  in (max (t1+p2) p1, maximum [m1, m2, s1+p2], max s2 (t2+s1), t1+t2)
+mcsDivAndCon :: [Int] -> Int
+mcsDivAndCon xs = 
+  let (_, m, _, _) = mcsDivAndCon' xs
+  in m
+
+mcsDivAndCon0 :: [Int] -> Int
+mcsDivAndCon0 [] = minBound
+mcsDivAndCon0 [a] | a > 0 = a
+                  | otherwise = 0
+mcsDivAndCon0 xs =
+  let (right, left) = splitAt (div (length xs) 2) xs
+      mr = mcsDivAndCon0 right
+      ml = mcsDivAndCon0 left
+      maxRight = maximum . scanr (+) 0
+      maxLeft = maximum . scanl (+) 0
+  in maximum [mr, ml, maxRight right + maxLeft left]
+
+-------------------------------------------------------------------------------
+--------------------------------- Part III ------------------------------------
+-------------------------------------------------------------------------------
+-- Chapter 10 Probablity Theory
+-- p1001:
+-- a. A \belong B, P(B) = P(A) + P(B / A) >= P(A)
+-- b. A \union B = A + B + (B \intersect A), all 3 parts disjoint
+-- c. P(A \union B) = P(A) + P(B) + P(B \intersect A) <= P(A) + P(B)
+-- p1002:
+-- a. P(A \union B) <= P(A) + P(B)
+-- b. P(A \union B \union C) <= P(A) + P(B \union C) <= P(A) + P(B) + P(C)
+-- p1003:
+-- P(A | B) = P(A \intersect B) / P(B)
+-- a. P(A \intersect B) <= P(B), so 1st law satisfy
+-- b. P(A | B \union C | B) = P(A \union C | B) = P((A \union C) \intersect B) / P(B)
+--                          = P((A \intersect B) \union (C \intersect B)) / P(B) (since sets property)
+--                          = P(A \intersect B) + P(C \intersect B) / P(B) (sets property)
+-- c. P(\Omega | B) = P(Omega \intersect B) / P(B) = P(B)/P(B) = 1
+-- p1004
+-- no, this example: roll a coin, A is the front side, and B is the other side.
+-- A and B are surely disjoint, but not independent.
+-- because A happens, then B mustn't happen
+
+-- Chapter 11 Randomized Algorithms
